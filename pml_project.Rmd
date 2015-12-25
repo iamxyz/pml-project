@@ -8,7 +8,7 @@ output: html_document
 ##### Author: Yulong Deng, Date:2015-12-24
 
 #### Abstract:
-In this report, we have tried to make human activity recognition based on the Weight Lifting Exercise Dataset. First, the dataset has been cleaned and approprate variables have been selected as predictors during the pre-processing work. Next, three classic machine learning models have been applied and evaluated, including classification tree (RPART), linear discriminant analysis (LDA) and random forests (RF). Then, the RF model, with the highest accuracy, has been choosed as the predication model. Based on k-fold cross validation, the assessment of the out of sample error (OSE) of RF model has been made. Last, the best fitted RF model is used to predict the classe of 20 different test cases and the results are given.       
+In this report, we have tried to make human activity recognition based on the Weight Lifting Exercise Dataset. First, the dataset has been cleaned and appropriate variables have been selected as predictors during the pre-processing work. Next, three classic machine learning models have been applied and evaluated, including classification tree (RPART), linear discriminant analysis (LDA) and random forests (RF). Then, the RF model, with the highest accuracy, has been chosen as the prediction model. Based on k-fold cross validation, the assessment of the out of sample error (OSE) of RF model has been made. Last, the best fitted RF model is used to predict the classes of 20 different test cases and the results are given.       
 
 #### 1. Pre-Processing for Datasets.
 ##### 1.1 Load the Datasets.
@@ -28,14 +28,14 @@ k1 <- apply(mydata1,2,function(x){sum(is.na(x))})
 mydata1_cleaned <- subset(mydata1, select = names(k1[k1==0]))
 ```
 ##### 1.3 Choosing the Predictors and Making the Datasets Ready for Training & Testing.
-Notes: The variables:"X","user_name","raw_timestamp_part_1","raw_timestamp_part_2","cvtd_timestamp","new_window","num_window" are removed from the predictors because of they are irrelevant to predication of classe of activity. So We get two final datasets: training_set for model training and validation, testing_set for model testing. 
+Notes: The variables:"X","user_name","raw_timestamp_part_1","raw_timestamp_part_2","cvtd_timestamp","new_window","num_window" are removed from the predictors because of they are irrelevant to prediction of classes of activity. So We get two final datasets: training_set for model training and validation, testing_set for model testing. 
 ```{r}
 m <- names(mydata_cleaned)[which(!(names(mydata_cleaned) %in% c("X","user_name","raw_timestamp_part_1","raw_timestamp_part_2","cvtd_timestamp","new_window","num_window")))]
 training_set <- subset(mydata_cleaned, select = m)
 m1 <- names(mydata1_cleaned)[which(!(names(mydata1_cleaned) %in% c("X","user_name","raw_timestamp_part_1","raw_timestamp_part_2","cvtd_timestamp","new_window","num_window")))]
 testing_set <- subset(mydata1_cleaned, select = m1)
 ```
-#### 2. Making comparison for Three Machine Learning Models. 
+#### 2. Making Comparison for Three Machine Learning Models. 
 Here we fit three classic machine learning models (RPART,LDA and RF), get their accuracy and training time respectively. 
 
 ##### 2.1 Data Splitting, Using Validation Set Approach.
@@ -83,8 +83,8 @@ barplot(t_all, names.arg = c("RPART", "LDA", "RF"), xlab ="Model", ylab ="Traini
 
 ```
 
-#### 3. Fitting Random Forests Models by Cross Validation and Applying it in Predication.
-We give first priority to accuracy of the models in our work, so the RF model is choosed and trained on datasets by cross validation, then the best fitted RF model is selected for predication on test dataset. 
+#### 3. Fitting Random Forests Models by Cross Validation and Applying it in Prediction.
+We give first priority to accuracy of the models in our work, so the RF model is choosed and trained on datasets by cross validation, then the best fitted RF model is selected for prediction on test dataset. 
 
 ##### 3.1 Data Splitting with K-Fold Cross Validation.
 Notes: In k-fold cv, k = 5. One fold is used for validation and the rest of folds are used for training. 
@@ -92,8 +92,8 @@ Notes: In k-fold cv, k = 5. One fold is used for validation and the rest of fold
 set.seed(5678)
 set_index <- createFolds(training_set$classe, k = 5, list = TRUE, returnTrain = FALSE)
 ```
-##### 3.2 RF model fitting and Predication. 
-Notes: RF model will be trained and validated based on datasets by K-Fold CV and applied on the testing_set for predication. This process is repeated five times, the accuracy value of fitted model on validation set and its predication result on test dataset in each time are stored for choosing the best model and predication.
+##### 3.2 RF Model fitting and Prediction. 
+Notes: RF model will be trained and validated based on datasets by K-Fold CV and applied on the testing_set for prediction. This process is repeated five times, the accuracy value of fitted model on validation set and its prediction result on test dataset in each time are stored for choosing the best model and prediction.
 ```{r cache = TRUE}
 a_five <- NULL
 pred_testingset_five <- list(NULL, NULL, NULL, NULL, NULL)
@@ -111,7 +111,7 @@ for(i in 1:5){
 }
 ```
 
-##### 3.3 Out of Sample Error (OSE) on validation dataset of RF Model in K-Fold CV.
+##### 3.3 Out of Sample Error (OSE) on Validation Dataset of RF Model in K-Fold CV.
 In our experiment, we use accuracy of fitted model on validation dataset to inspect the out of sample error (OSE). The OSE values in five cross validation are given as Fig.3.
 The lowest out of sample error rate and their mean based on validation dataset for the fitted RF model are given as :
 ```{r}
@@ -126,13 +126,13 @@ abline(h = mean(1 - a_five), lwd = 2, col = "red")
 legend("topright", pch = 15, col = c("blue","red"), legend = c( "Out of Sample Error","Mean of Out of Sample Error" ))
 ```
 
-##### 3.4 Predication Result on Test Dataset and the Out Sample Error.
-Based on the five accuracy values of fitted RF model stored before, we choose the fitted model with lowest OSE and its predication result on testing_set. so the predications for activity classe of the 20 test cases is:
+##### 3.4 Prediction Result on Test Dataset and the Out Sample Error.
+Based on the five accuracy values of fitted RF model stored before, we choose the fitted model with lowest OSE and its prediction result on testing_set. so the predictions for activity classes of the 20 test cases is:
 ```{r}
 model_index <- which(1 - a_five == min(1 - a_five)) 
 pred_testingset_five[[model_index]]
 ```
-Before apply the fitted model to the testing_set,the true OSE is unkonwn, we expect it will be lower than the OSE value gotten on the validation dataset. Then we submit the predication result in the course project site and hit all of the problems correctly (from program id 1 to 20), so we can give the true out of sample error of our model on the test dataset, as:
+Before apply the fitted model to the testing_set,the true OSE is unknown, we expect it will be lower than the OSE value gotten on the validation dataset. Then we submit the prediction result in the course project site and hit all of the problems correctly (from program id 1 to 20), so we can give the true out of sample error of our model on the test dataset, as:
 ```{r}
 answers=as.factor(c("B","A","B","A","A","E","D","B","A","A","B","C","B","A","E","E","A", "B","B","B"))
 k1 <- confusionMatrix(pred_testingset_five[[model_index]],answers)
