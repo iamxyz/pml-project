@@ -92,7 +92,7 @@ Notes: In k-fold cv, k = 5. One fold is used for validation and the rest of fold
 set.seed(5678)
 set_index <- createFolds(training_set$classe, k = 5, list = TRUE, returnTrain = FALSE)
 ```
-##### 3.2 RF Model fitting and Prediction. 
+##### 3.2 RF Model Fitting and Prediction. 
 Notes: RF model will be trained and validated based on datasets by K-Fold CV and applied on the testing_set for prediction. This process is repeated five times, the accuracy value of fitted model on validation set and its prediction result on test dataset in each time are stored for choosing the best model and prediction.
 ```{r cache = TRUE}
 a_five <- NULL

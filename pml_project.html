@@ -158,7 +158,7 @@ barplot(t_all, names.arg = c(&quot;RPART&quot;, &quot;LDA&quot;, &quot;RF&quot;)
 set_index &lt;- createFolds(training_set$classe, k = 5, list = TRUE, returnTrain = FALSE)</code></pre>
 </div>
 <div id="rf-model-fitting-and-prediction." class="section level5">
-<h5>3.2 RF Model fitting and Prediction.</h5>
+<h5>3.2 RF Model Fitting and Prediction.</h5>
 <p>Notes: RF model will be trained and validated based on datasets by K-Fold CV and applied on the testing_set for prediction. This process is repeated five times, the accuracy value of fitted model on validation set and its prediction result on test dataset in each time are stored for choosing the best model and prediction.</p>
 <pre class="r"><code>a_five &lt;- NULL
 pred_testingset_five &lt;- list(NULL, NULL, NULL, NULL, NULL)
