@@ -39,7 +39,7 @@ testing_set <- subset(mydata1_cleaned, select = m1)
 Here we fit three classic machine learning models (RPART,LDA and RF), get their accuracy and training time respectively. 
 
 ##### 2.1 Data Splitting, Using Validation Set Approach.
-Notes: The training_set is splitted to two parts, where 70% of samples for training and 30% of samples for validation.
+Notes: The training_set is splitted to two parts, where 70% of samples are used for training and 30% of samples are used for validation.
 ```{r}
 set.seed(1234)
 inTrain <- createDataPartition(training_set$classe, p=0.7, list=FALSE)
@@ -87,7 +87,7 @@ barplot(t_all, names.arg = c("RPART", "LDA", "RF"), xlab ="Model", ylab ="Traini
 We give first priority to accuracy of the models in our work, so the RF model is choosed and trained on datasets by cross validation, then the best fitted RF model is selected for prediction on test dataset finally. 
 
 ##### 3.1 Data Splitting with K-Fold Cross Validation.
-Notes: In k-fold cv, k = 5. The training_set is splitted to five folds, One fold is used for validation and the rest of folds are used for training. 
+Notes: In k-fold cv, k = 5. The training_set is splitted to five folds, one fold is used for validation and the rest of folds are used for training. 
 ```{r}
 set.seed(5678)
 set_index <- createFolds(training_set$classe, k = 5, list = TRUE, returnTrain = FALSE)
