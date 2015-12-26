@@ -75,7 +75,7 @@ img {
 <h4>1. Pre-Processing for Datasets.</h4>
 <div id="load-the-datasets." class="section level5">
 <h5>1.1 Load the Datasets.</h5>
-<p>Note: Three types of items: “NA”, “#DIV/0!”, “” are marked as NA in datasets</p>
+<p>Note: Three types of items: “NA”, “#DIV/0!”, “” are marked as NA in datasets.</p>
 <pre class="r"><code>library(caret); library(randomForest); library(rpart); library(MASS)</code></pre>
 <pre><code>## Loading required package: lattice
 ## Loading required package: ggplot2
@@ -92,9 +92,9 @@ mydata_cleaned &lt;- subset(mydata, select = names(k[k==0]))
 k1 &lt;- apply(mydata1,2,function(x){sum(is.na(x))})
 mydata1_cleaned &lt;- subset(mydata1, select = names(k1[k1==0]))</code></pre>
 </div>
-<div id="choosing-the-predictors-and-making-the-datasets-ready-for-training-testing." class="section level5">
-<h5>1.3 Choosing the Predictors and Making the Datasets Ready for Training &amp; Testing.</h5>
-<p>Notes: The variables:“X”,“user_name”,“raw_timestamp_part_1”,“raw_timestamp_part_2”,“cvtd_timestamp”,“new_window”,“num_window” are removed from the predictors because of they are irrelevant to prediction of classes of activity. So We get two final datasets: training_set for model training and validation, testing_set for model testing.</p>
+<div id="choosing-the-predictors-and-making-the-datasets-ready-for-training-and-testing." class="section level5">
+<h5>1.3 Choosing the Predictors and Making the Datasets Ready for Training and Testing.</h5>
+<p>Notes: The variables:“X”,“user_name”,“raw_timestamp_part_1”,“raw_timestamp_part_2”,“cvtd_timestamp”,“new_window”,“num_window” are removed from the predictors because of they are irrelevant to prediction of classes of activity. So We get two final datasets: training_set and testing_set, in which training_set is used for model training and validation, testing_set is setted aside for final model testing.</p>
 <pre class="r"><code>m &lt;- names(mydata_cleaned)[which(!(names(mydata_cleaned) %in% c(&quot;X&quot;,&quot;user_name&quot;,&quot;raw_timestamp_part_1&quot;,&quot;raw_timestamp_part_2&quot;,&quot;cvtd_timestamp&quot;,&quot;new_window&quot;,&quot;num_window&quot;)))]
 training_set &lt;- subset(mydata_cleaned, select = m)
 m1 &lt;- names(mydata1_cleaned)[which(!(names(mydata1_cleaned) %in% c(&quot;X&quot;,&quot;user_name&quot;,&quot;raw_timestamp_part_1&quot;,&quot;raw_timestamp_part_2&quot;,&quot;cvtd_timestamp&quot;,&quot;new_window&quot;,&quot;num_window&quot;)))]
@@ -106,7 +106,7 @@ testing_set &lt;- subset(mydata1_cleaned, select = m1)</code></pre>
 <p>Here we fit three classic machine learning models (RPART,LDA and RF), get their accuracy and training time respectively.</p>
 <div id="data-splitting-using-validation-set-approach." class="section level5">
 <h5>2.1 Data Splitting, Using Validation Set Approach.</h5>
-<p>Notes: 70% of samples for training and 30% of samples for validation.</p>
+<p>Notes: The training_set is splitted to two parts, where 70% of samples for training and 30% of samples for validation.</p>
 <pre class="r"><code>set.seed(1234)
 inTrain &lt;- createDataPartition(training_set$classe, p=0.7, list=FALSE)
 training &lt;- training_set[inTrain,]
@@ -150,16 +150,16 @@ barplot(t_all, names.arg = c(&quot;RPART&quot;, &quot;LDA&quot;, &quot;RF&quot;)
 </div>
 <div id="fitting-random-forests-models-by-cross-validation-and-applying-it-in-prediction." class="section level4">
 <h4>3. Fitting Random Forests Models by Cross Validation and Applying it in Prediction.</h4>
-<p>We give first priority to accuracy of the models in our work, so the RF model is choosed and trained on datasets by cross validation, then the best fitted RF model is selected for prediction on test dataset.</p>
+<p>We give first priority to accuracy of the models in our work, so the RF model is choosed and trained on datasets by cross validation, then the best fitted RF model is selected for prediction on test dataset finally.</p>
 <div id="data-splitting-with-k-fold-cross-validation." class="section level5">
 <h5>3.1 Data Splitting with K-Fold Cross Validation.</h5>
-<p>Notes: In k-fold cv, k = 5. One fold is used for validation and the rest of folds are used for training.</p>
+<p>Notes: In k-fold cv, k = 5. The training_set is splitted to five folds, One fold is used for validation and the rest of folds are used for training.</p>
 <pre class="r"><code>set.seed(5678)
 set_index &lt;- createFolds(training_set$classe, k = 5, list = TRUE, returnTrain = FALSE)</code></pre>
 </div>
 <div id="rf-model-fitting-and-prediction." class="section level5">
 <h5>3.2 RF Model Fitting and Prediction.</h5>
-<p>Notes: RF model will be trained and validated based on datasets by K-Fold CV and applied on the testing_set for prediction. This process is repeated five times, the accuracy value of fitted model on validation set and its prediction result on test dataset in each time are stored for choosing the best model and prediction.</p>
+<p>Notes: RF model will be trained and validated based on datasets by K-Fold CV and applied on the testing_set for prediction. This process is repeated five times, the accuracy value of fitted model on validation set and its prediction result on final test dataset in each time are stored for choosing the best model and prediction.</p>
 <pre class="r"><code>a_five &lt;- NULL
 pred_testingset_five &lt;- list(NULL, NULL, NULL, NULL, NULL)
 for(i in 1:5){
@@ -177,7 +177,7 @@ for(i in 1:5){
 </div>
 <div id="out-of-sample-error-ose-on-validation-dataset-of-rf-model-in-k-fold-cv." class="section level5">
 <h5>3.3 Out of Sample Error (OSE) on Validation Dataset of RF Model in K-Fold CV.</h5>
-<p>In our experiment, we use accuracy of fitted model on validation dataset to inspect the out of sample error (OSE). The OSE values in five cross validation are given as Fig.3. The lowest out of sample error rate and their mean based on validation dataset for the fitted RF model are given as :</p>
+<p>In our experiment, we use accuracy of fitted model on validation dataset to inspect the out of sample error (OSE). The different OSE values in five cross validation and the average of OSE are given as Fig.3. The lowest out of sample error rate and their mean based on validation dataset for the fitted RF model are given as :</p>
 <pre class="r"><code>min(1 - a_five)</code></pre>
 <pre><code>## [1] 0.002803262</code></pre>
 <pre class="r"><code>mean(1 - a_five)</code></pre>
@@ -189,13 +189,13 @@ legend(&quot;topright&quot;, pch = 15, col = c(&quot;blue&quot;,&quot;red&quot;)
 </div>
 <div id="prediction-result-on-test-dataset-and-the-out-sample-error." class="section level5">
 <h5>3.4 Prediction Result on Test Dataset and the Out Sample Error.</h5>
-<p>Based on the five accuracy values of fitted RF model stored before, we choose the fitted model with lowest OSE and its prediction result on testing_set. so the predictions for activity classes of the 20 test cases is:</p>
+<p>Based on the five accuracy values of fitted RF model stored before, we choose the fitted model with lowest OSE and its prediction result on final testing_set. so the predictions for activity classes of the 20 test cases is:</p>
 <pre class="r"><code>model_index &lt;- which(1 - a_five == min(1 - a_five)) 
 pred_testingset_five[[model_index]]</code></pre>
 <pre><code>##  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 
 ##  B  A  B  A  A  E  D  B  A  A  B  C  B  A  E  E  A  B  B  B 
 ## Levels: A B C D E</code></pre>
-<p>Before apply the fitted model to the testing_set,the true OSE is unknown, we expect it will be lower than the OSE value gotten on the validation dataset. Then we submit the prediction result in the course project site and hit all of the problems correctly (from program id 1 to 20), so we can give the true out of sample error of our model on the test dataset, as:</p>
+<p>Before apply the fitted model to the final testing_set, the true OSE is unknown, we expect it will be lower than the OSE value gotten on the validation dataset. Then we submit the prediction result in the course project site and hit all of the problems correctly (from program id 1 to 20), so we can give the true out of sample error of our model on the test dataset, as:</p>
 <pre class="r"><code>answers=as.factor(c(&quot;B&quot;,&quot;A&quot;,&quot;B&quot;,&quot;A&quot;,&quot;A&quot;,&quot;E&quot;,&quot;D&quot;,&quot;B&quot;,&quot;A&quot;,&quot;A&quot;,&quot;B&quot;,&quot;C&quot;,&quot;B&quot;,&quot;A&quot;,&quot;E&quot;,&quot;E&quot;,&quot;A&quot;, &quot;B&quot;,&quot;B&quot;,&quot;B&quot;))
 k1 &lt;- confusionMatrix(pred_testingset_five[[model_index]],answers)
 1 - as.numeric(k1$overall[1])</code></pre>
