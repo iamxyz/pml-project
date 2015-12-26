@@ -28,7 +28,7 @@ k1 <- apply(mydata1,2,function(x){sum(is.na(x))})
 mydata1_cleaned <- subset(mydata1, select = names(k1[k1==0]))
 ```
 ##### 1.3 Choosing the Predictors and Making the Datasets Ready for Training and Testing.
-Notes: The variables:"X","user_name","raw_timestamp_part_1","raw_timestamp_part_2","cvtd_timestamp","new_window","num_window" are removed from the predictors because of they are irrelevant to prediction of classes of activity. So We get two final datasets: training_set and testing_set, in which training_set is used for model training and validation, testing_set is setted aside for final model testing. 
+Notes: The variables:"X","user_name","raw_timestamp_part_1","raw_timestamp_part_2","cvtd_timestamp","new_window","num_window" are removed from the predictors because of they are irrelevant to prediction of classes of activity. So We get two final datasets: training_set and testing_set, in which training_set is used for model training and validation, testing_set is set aside for final model testing. 
 ```{r}
 m <- names(mydata_cleaned)[which(!(names(mydata_cleaned) %in% c("X","user_name","raw_timestamp_part_1","raw_timestamp_part_2","cvtd_timestamp","new_window","num_window")))]
 training_set <- subset(mydata_cleaned, select = m)
@@ -39,7 +39,7 @@ testing_set <- subset(mydata1_cleaned, select = m1)
 Here we fit three classic machine learning models (RPART,LDA and RF), get their accuracy and training time respectively. 
 
 ##### 2.1 Data Splitting, Using Validation Set Approach.
-Notes: The training_set is splitted to two parts, where 70% of samples are used for training and 30% of samples are used for validation.
+Notes: The training_set is split to two parts, where 70% of samples are used for training and 30% of samples are used for validation.
 ```{r}
 set.seed(1234)
 inTrain <- createDataPartition(training_set$classe, p=0.7, list=FALSE)
@@ -87,7 +87,7 @@ barplot(t_all, names.arg = c("RPART", "LDA", "RF"), xlab ="Model", ylab ="Traini
 We give first priority to accuracy of the models in our work, so the RF model is choosed and trained on datasets by cross validation, then the best fitted RF model is selected for prediction on test dataset finally. 
 
 ##### 3.1 Data Splitting with K-Fold Cross Validation.
-Notes: In k-fold cv, k = 5. The training_set is splitted to five folds, one fold is used for validation and the rest of folds are used for training. 
+Notes: In k-fold cv, k = 5. The training_set is split to five folds, one fold is used for validation and the rest of folds are used for training. 
 ```{r}
 set.seed(5678)
 set_index <- createFolds(training_set$classe, k = 5, list = TRUE, returnTrain = FALSE)
@@ -127,12 +127,12 @@ legend("topright", pch = 15, col = c("blue","red"), legend = c( "Out of Sample E
 ```
 
 ##### 3.4 Prediction Result on Test Dataset and the Out Sample Error.
-Based on the five accuracy values of fitted RF model stored before, we choose the fitted model with lowest OSE and its prediction result on final testing_set. so the predictions for activity classes of the 20 test cases is:
+Based on the five accuracy values of fitted RF model stored before, we choose the fitted model with lowest OSE and its prediction result on final testing_set. So the predictions for activity classes of the 20 test cases is:
 ```{r}
 model_index <- which(1 - a_five == min(1 - a_five)) 
 pred_testingset_five[[model_index]]
 ```
-Before apply the fitted model to the final testing_set, the true OSE is unknown, we expect it will be lower than the OSE value gotten on the validation dataset. Then we submit the prediction result in the course project site and hit all of the problems correctly (from program id 1 to 20), so we can give the true out of sample error of our model on the test dataset, as:
+Before applying the fitted model to the final testing_set, the true OSE is unknown, we expect it will be lower than the OSE value gotten on the validation dataset. Then we submit the prediction result in the course project site and hit all of the problems correctly (from program id 1 to 20), so we can give the true out of sample error of our model on the test dataset, as:
 ```{r}
 answers=as.factor(c("B","A","B","A","A","E","D","B","A","A","B","C","B","A","E","E","A", "B","B","B"))
 k1 <- confusionMatrix(pred_testingset_five[[model_index]],answers)
